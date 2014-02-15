@@ -204,5 +204,8 @@ function download(filename, text) {
 })(jQuery);
 
 $( document ).ready(function() {
+    $(".disabled").removeClass("disabled");
+    $(".glyphicon-edit").parent().attr("href", "#json-edit");
+    $(".glyphicon-wrench").parent().attr("href", "#options");
     addMark();
 });

@@ -28,13 +28,13 @@
     <div class="center-block">
       <div class="col-xs-offset-0">
         <ul class="list-group btn-group-vertical col-xs-12">
-          <li class="btn btn-primary btn-lg btn-block" onclick="addMark();"><span class="glyphicon glyphicon-plus"> Row</span></li>
+          <li class="btn btn-primary btn-lg btn-block disabled" onclick="addMark();"><span class="glyphicon glyphicon-plus"> Row</span></li>
           <li class="list-group-item text-center"><span id="average" class="glyphicon glyphicon-stats"></span></li>
           <!--<a class="list-group-item text-center bg-info text-success" href="#" onclick="exportJSON();"><span class="glyphicon glyphicon-download h5"> Export as JSON</span></a>-->
           <li class="list-group-item hidden-xs hidden-sm">
             <div class="text-center text-info">
-                <a data-toggle="collapse" data-parent="#accordion" href="#json-edit">
-                  <span class="glyphicon glyphicon-edit h5"> Edit JSON</span>
+                <a data-toggle="collapse" data-parent="#accordion" href="">
+                  <span class="glyphicon glyphicon-edit h5 "> Edit JSON</span>
                 </a>
               </div>
             <div id="json-edit" class="collapse form-group">
@@ -49,7 +49,7 @@
           </li>
           <li class="list-group-item hidden-md hidden-lg">
             <div class="text-center text-info">
-                <a data-toggle="collapse" data-parent="#accordion" href="#options">
+                <a data-toggle="collapse" data-parent="#accordion" href="">
                   <span class="glyphicon glyphicon-wrench h5"> Options</span>
                 </a>
               </div>
@@ -65,7 +65,7 @@
               </label>
             </div>
           </li>
-          <li class="btn btn-danger btn-lg btn-block" onclick="delAllMark();"><span class="glyphicon glyphicon-trash"> Clear</span></li>
+          <li class="btn btn-danger btn-lg btn-block disabled" onclick="delAllMark();"><span class="glyphicon glyphicon-trash"> Clear</span></li>
       </ul>
     </div>
     </div>
