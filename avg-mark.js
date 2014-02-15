@@ -58,17 +58,27 @@ function delMark(elem) {
     });
 }
 
-function updateInputs() {
+function updateInputs(inp) {
     var keyboard="number";
-    if ($("#options #tel-key").is(":checked"))
-        keyboard = "tel";
-    $("#marks .mark-group input").attr("type", keyboard);
+    switch (inp) {
+        case 'tel':
+            if ($("#options #tel-key").is(":checked"))
+                keyboard = "tel";
+            $("#marks .mark-group input").attr("type", keyboard);
+        break;
 
-    if ($("#options #display-json").is(":checked")) {
-        $("#json-edit").parent().removeClass("hidden-sm hidden-xs").hide().show("fast");
-    } else {
-        $("#json-edit").parent().hide("fast", function() {$("#json-edit").parent().addClass("hidden-sm hidden-xs");});
+        case 'json':
+            if ($("#options #display-json").is(":checked")) {
+                $("#json-edit").parent().removeClass("hidden-sm hidden-xs").hide().show("fast");
+            } else {
+                $("#json-edit").parent().hide("fast", function() {$("#json-edit").parent().addClass("hidden-sm hidden-xs");});
+            }
+        break;
+
+        default:
+            break;
     }
+
 }
 
 function markHTML(v, c) {
@@ -127,18 +137,34 @@ function updateFromJSON() {
     AVGMARK.total = [];
     AVGMARK.coeffs = [];
 
+    var last_ind = -1;
+    var delButs = $(".mark-group .btn-danger");
     for (var i = 0; i < json.length; i++) {
         AVGMARK.total[i] = json[i].v;
         AVGMARK.coeffs[i] = json[i].c;
     }
 
+    for (i = json.length; i < delButs.length; i++) {
+        delButs.eq(i).click();
+    }
+
     $(".mark-group .coeff").each(function(index, elem) {
         elem.value = AVGMARK.coeffs[index];
+        last_ind = index;
     });
 
     $(".mark-group .mark").each(function(index, elem) {
         elem.value = AVGMARK.total[index];
+        if (index > last_ind) last_ind = index;
     });
+
+    // add missing buttons
+    last_ind++;
+    if (last_ind >= delButs.length) {
+        for (i = last_ind; i < json.length; i++) {
+            addMark(json[i].v, json[i].c);
+        }
+    }
 
     avgCalc();
 }
