@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Easy average calculator">
+    <meta name="author" content="Eduardo San Martin Morote">
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <title>Average Calculator</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+  <br>
+  <div class="container">
+    <div id="marks">
+    </div>
+    <div class="center-block">
+      <div class="col-xs-offset-0">
+        <ul class="list-group btn-group-vertical col-xs-12">
+          <li class="btn btn-primary btn-lg btn-block" onclick="addMark();"><span class="glyphicon glyphicon-plus"> Row</span></li>
+          <li class="list-group-item text-center"><span id="average" class="glyphicon glyphicon-stats"></span></li>
+          <!--<a class="list-group-item text-center bg-info text-success" href="#" onclick="exportJSON();"><span class="glyphicon glyphicon-download h5"> Export as JSON</span></a>-->
+          <li class="list-group-item hidden-xs hidden-sm">
+            <div class="text-center text-info">
+                <a data-toggle="collapse" data-parent="#accordion" href="#json-edit">
+                  <span class="glyphicon glyphicon-edit h5"> Edit JSON</span>
+                </a>
+              </div>
+            <div id="json-edit" class="collapse form-group">
+              <br>
+              <textarea class="form-control" rows="10" onchange="updateFromJSON();"></textarea>
+              <label class="checkbox">
+                <input type="checkbox" id="use-tabs" value="" onchange="updateJSON();">
+                Use tab based indentation
+              </label>
+              </label>
+            </div>
+          </li>
+          <li class="list-group-item hidden-md hidden-lg">
+            <div class="text-center text-info">
+                <a data-toggle="collapse" data-parent="#accordion" href="#options">
+                  <span class="glyphicon glyphicon-wrench h5"> Options</span>
+                </a>
+              </div>
+            <div id="options" class="collapse form-group">
+              <label class="checkbox">
+                <input type="checkbox" id="tel-key" value="" onchange="updateInputs();">
+                Use telephone keyboard instead of numeric one
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" id="display-json" value="" onchange="updateInputs();">
+                Display JSON editor
+              </label>
+              </label>
+            </div>
+          </li>
+          <li class="btn btn-danger btn-lg btn-block" onclick="delAllMark();"><span class="glyphicon glyphicon-trash"> Clear</span></li>
+      </ul>
+    </div>
+    </div>
+  </div>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="avg-mark.js"></script>
+  </body>
+</html>
+
