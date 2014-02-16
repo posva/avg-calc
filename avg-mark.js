@@ -35,10 +35,11 @@ function avgCalc() {
 
 function addMark(v, c) {
     $("#marks table").append(markHTML(v, c));
-    $("#marks  table tr:last-child").show("fast");
+    var mark = $("#marks  table tr:last-child");
+    mark.show("fast");
     avgCalc();
     toggleMinus();
-    $("#marks  table tr:last-child").goTo();
+    mark.goTo();
 }
 
 function toggleMinus() {
@@ -81,11 +82,11 @@ function updateInputs(inp) {
 
 }
 
-function markHTML(v, c) {
+function markHTML(v, w) {
     if (v === undefined)
         v = "";
-    if (c === undefined)
-        c = "";
+    if (w === undefined)
+        w = "";
 
     var keyboard="number";
     if ($("#options #tel-key").is(":checked"))
@@ -93,8 +94,8 @@ function markHTML(v, c) {
 
     return '<tr class="mark-group" style="display: none;">\
           <td><input type="'+keyboard+'" value="'+v+'" class="form-control mark" placeholder="Value" onchange="markChange(this)"></td>\
-          <td><input type="'+keyboard+'" value="'+c+'" class="form-control coeff" placeholder="Weight" onchange="markChange(this)"></td>\
-          <td><button type="button" class="form-control btn btn-danger disabled" onclick="delMark(this)"><span class="glyphicon glyphicon-minus"></span></button></td>\
+          <td><input type="'+keyboard+'" value="'+w+'" class="form-control coeff" placeholder="Weight" onchange="markChange(this)"></td>\
+          <td><button type="button" class="form-control btn btn-danger disabled" onclick="delMark(this)"><span class="glyphicon glyphicon-remove"></span></button></td>\
         </tr>';
     //return '<div class="mark-group" style="display: none;"><div class="input-group">\
         //<span class="input-group-addon btn btn-danger disabled" onclick="delMark(this)">\
@@ -119,7 +120,7 @@ function updateJSON() {
     AVGMARK.json = [];
     for (var i = 0; i < AVGMARK.total.length; i++)
         AVGMARK.json[i] = { v: AVGMARK.total[i],
-                    c: AVGMARK.coeffs[i]
+                    w: AVGMARK.coeffs[i]
         };
 
         if ($("#json-edit #use-tabs").is(":checked"))
@@ -146,7 +147,7 @@ function updateFromJSON() {
     var delButs = $(".mark-group .btn-danger");
     for (var i = 0; i < json.length; i++) {
         AVGMARK.total[i] = json[i].v;
-        AVGMARK.coeffs[i] = json[i].c;
+        AVGMARK.coeffs[i] = json[i].w;
     }
 
     for (i = json.length; i < delButs.length; i++) {
@@ -167,7 +168,7 @@ function updateFromJSON() {
     last_ind++;
     if (last_ind >= delButs.length) {
         for (i = last_ind; i < json.length; i++) {
-            addMark(json[i].v, json[i].c);
+            addMark(json[i].v, json[i].w);
         }
     }
 
@@ -178,14 +179,14 @@ function exportJSON() {
     var json = [];
     for (var i = 0; i < AVGMARK.total.length; i++)
         json[i] = { v: AVGMARK.total[i],
-                    c: AVGMARK.coeffs[i]
+                    w: AVGMARK.coeffs[i]
         };
         //download("marks.json", JSON.stringify(json, null, '\t'));
 }
 
 function loadJSON(json) {
     for (var o in json) {
-        addMark(o.v, o.c);
+        addMark(o.v, o.w);
     }
 }
 
@@ -213,4 +214,5 @@ $( document ).ready(function() {
     $(".glyphicon-edit").parent().attr("href", "#json-edit");
     $(".glyphicon-wrench").parent().attr("href", "#options");
     addMark();
+    $("[rel='tooltip']").tooltip({delay: { show: 750, hide: 0}});
 });
