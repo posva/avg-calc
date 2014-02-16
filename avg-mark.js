@@ -34,11 +34,11 @@ function avgCalc() {
 }
 
 function addMark(v, c) {
-    $("#marks").append(markHTML(v, c));
-    $("#marks div:last-child").show("fast");
+    $("#marks table").append(markHTML(v, c));
+    $("#marks  table tr:last-child").show("fast");
     avgCalc();
     toggleMinus();
-    $("#marks div:last-child").goTo();
+    $("#marks  table tr:last-child").goTo();
 }
 
 function toggleMinus() {
@@ -91,13 +91,18 @@ function markHTML(v, c) {
     if ($("#options #tel-key").is(":checked"))
         keyboard = "tel";
 
-    return '<div class="mark-group" style="display: none;"><div class="input-group">\
-        <span class="input-group-addon btn btn-danger disabled" onclick="delMark(this)">\
-          <span class="glyphicon glyphicon-minus"></span>\
-        </span>\
-        <input type="'+keyboard+'" value="'+v+'" class="form-control mark" onchange="markChange(this);" placeholder="Mark">\
-        <input type="'+keyboard+'" value="'+c+'" class="form-control coeff" onchange="markChange(this);" placeholder="1.0">\
-      </div><br></div>';
+    return '<tr class="mark-group" style="display: none;">\
+          <td><input type="'+keyboard+'" value="'+v+'" class="form-control mark" placeholder="Value" onchange="markChange(this)"></td>\
+          <td><input type="'+keyboard+'" value="'+c+'" class="form-control coeff" placeholder="Weight" onchange="markChange(this)"></td>\
+          <td><button type="button" class="form-control btn btn-danger disabled" onclick="delMark(this)"><span class="glyphicon glyphicon-minus"></span></button></td>\
+        </tr>';
+    //return '<div class="mark-group" style="display: none;"><div class="input-group">\
+        //<span class="input-group-addon btn btn-danger disabled" onclick="delMark(this)">\
+          //<span class="glyphicon glyphicon-minus"></span>\
+        //</span>\
+        //<input type="'+keyboard+'" value="'+v+'" class="form-control mark" onchange="markChange(this);" placeholder="Mark">\
+        //<input type="'+keyboard+'" value="'+c+'" class="form-control coeff" onchange="markChange(this);" placeholder="1.0">\
+      //</div><br></div>';
 }
 
 function delAllMark() {
