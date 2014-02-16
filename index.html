@@ -28,8 +28,8 @@
     <div class="center-block">
       <div class="col-xs-offset-0">
         <ul class="list-group btn-group-vertical col-xs-12">
-          <li class="btn btn-primary btn-lg btn-block disabled" onclick="addMark();"><span class="glyphicon glyphicon-plus"> Row</span></li>
-          <li class="list-group-item text-center"><span id="average" class="glyphicon glyphicon-stats"></span></li>
+          <li class="btn btn-primary btn-lg btn-block disabled" onclick="addMark();" rel="tooltip" data-toggle="tooltip" title="Add a new value"><span class="glyphicon glyphicon-plus"> Row</span></li>
+          <li class="list-group-item text-center" rel="tooltip" data-toggle="tooltip" title="Here is the average!"><span id="average" class="glyphicon glyphicon-stats"></span></li>
           <!--<a class="list-group-item text-center bg-info text-success" href="#" onclick="exportJSON();"><span class="glyphicon glyphicon-download h5"> Export as JSON</span></a>-->
           <li class="list-group-item hidden-xs hidden-sm">
             <div class="text-center text-info">
@@ -65,7 +65,7 @@
               </label>
             </div>
           </li>
-          <li class="btn btn-danger btn-lg btn-block disabled" onclick="delAllMark();"><span class="glyphicon glyphicon-trash"> Clear</span></li>
+          <li class="btn btn-danger btn-lg btn-block disabled" onclick="delAllMark();" rel="tooltip" data-toggle="tooltip" title="Delete all the values"><span class="glyphicon glyphicon-trash"> Clear</span></li>
       </ul>
     </div>
     </div>
