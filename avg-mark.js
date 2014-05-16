@@ -4,33 +4,71 @@ var AVGMARK = {
 };
 
 function markChange(me) {
+    var tmp, error;
     if (me.value.indexOf(',') != -1)
         me.value = me.value.replace(',', '.');
-    me.value = parseFloat(me.value);
-    if (me.value == "NaN" || isNaN(me.value))
-        me.value = "";
-    avgCalc();
+    tmp = parseFloat(me.value);
+    error = tmp == "NaN" || isNaN(tmp);
+    if (me.validity.valid || !error) {
+        $(me).parent().removeClass("has-error");
+        avgCalc();
+    } else {
+        $(me).parent().addClass("has-error");
+        console.log("NOOO");
+    }
 }
 
 function avgCalc() {
     AVGMARK.total = [];
     AVGMARK.coeffs = [];
-    var avg = 0, n = 0;
+    var sum = 0, n = 0;
     $(".mark-group .coeff").each(function(index, elem) {
-        AVGMARK.coeffs[index] = (elem.value !== "")?parseFloat(elem.value):1;
-        n += AVGMARK.coeffs[index];
+        if (elem.value === "") {
+            AVGMARK.coeffs[index] = {
+                val: 1,
+                valid: false
+            };
+        } else {
+            AVGMARK.coeffs[index] = {
+                val: parseFloat(elem.value),
+                valid: true
+            };
+        }
     });
+
     $(".mark-group .mark").each(function(index, elem) {
-        AVGMARK.total[index] = (elem.value !== "")?parseFloat(elem.value):0;
-        avg += AVGMARK.total[index]*AVGMARK.coeffs[index];
+        if (elem.value === "") {
+            AVGMARK.total[index] = {
+                val: 0,
+                valid: false
+            };
+        } else {
+            AVGMARK.total[index] = {
+                val: parseFloat(elem.value),
+                valid: true
+            };
+            n += AVGMARK.coeffs[index].val; // take into account default coeff
+            sum += AVGMARK.total[index].val*AVGMARK.coeffs[index].val;
+        }
     });
+
     if (n === 0) {
         n = 1;
-        avg = 0;
+        sum = 0;
     }
-    $('#average').html(" "+(avg/n).toFixed(3));
-    updateJSON();
+    //console.log("avg: "+sum+"/"+n);
+    $('#average').html(" "+(sum/n).toFixed(3));
 
+    // remove invalid values before updating json
+    for (var i = 0; i < AVGMARK.total.length; i++) {
+        if (!AVGMARK.total[i].valid) {
+            AVGMARK.total.splice(i, 1);
+            AVGMARK.coeffs.splice(i, 1);
+            i--;
+        }
+    }
+
+    updateJSON();
 }
 
 function addMark(v, w) {
@@ -98,8 +136,8 @@ function markHTML(v, w) {
         <span class="input-group-addon btn btn-danger disabled" onclick="delMark(this)" rel="tooltip" data-toggle="tooltip" data-placement="bottom" title="Remove this value">\
           <span class="glyphicon glyphicon-remove"></span>\
         </span>\
-        <input type="'+keyboard+'" value="'+v+'" class="form-control mark" onchange="markChange(this);" placeholder="Value">\
-        <input type="'+keyboard+'" value="'+w+'" class="form-control coeff" onchange="markChange(this);" placeholder="Weight (default: 1)">\
+        <input type="'+keyboard+'" value="'+v+'" class="form-control mark" onkeyup="markChange(this);" onpaste="setTimeout(function() {markChange(this);}, 4);" placeholder="Value">\
+        <input type="'+keyboard+'" value="'+w+'" class="form-control coeff" onkeyup="markChange(this);" onpaste="setTimeout(function() {markChange(this);}, 4);" placeholder="Weight (default: 1)">\
       </div><br></div>';
 }
 
@@ -108,7 +146,7 @@ function delAllMark() {
         $(elem).hide("fast", function() {
             this.remove();
             avgCalc();
-        })
+        });
     });
 }
 
@@ -116,17 +154,19 @@ function updateJSON() {
     var space = '';
     AVGMARK.json = [];
     for (var i = 0; i < AVGMARK.total.length; i++)
-        AVGMARK.json[i] = { v: AVGMARK.total[i],
-                    w: AVGMARK.coeffs[i]
-        };
+    AVGMARK.json[i] = {
+        v: AVGMARK.total[i].val,
+        w: AVGMARK.coeffs[i].val
+    };
 
-        if ($("#json-edit #use-tabs").is(":checked"))
-            space = '\t';
-        $("#json-edit textarea").val(JSON.stringify(AVGMARK.json, null, space));
+    if ($("#json-edit #use-tabs").is(":checked"))
+        space = '\t';
+    $("#json-edit textarea").val(JSON.stringify(AVGMARK.json, null, space));
+    $("#json-edit").removeClass("has-error");
 }
 
 function updateFromJSON() {
-    var json;
+    var json, i;
     try {
         json = $.parseJSON($("#json-edit textarea").val());
     } catch (e) {
@@ -142,23 +182,34 @@ function updateFromJSON() {
 
     var last_ind = -1;
     var delButs = $(".mark-group .btn-danger");
-    for (var i = 0; i < json.length; i++) {
-        AVGMARK.total[i] = json[i].v;
-        AVGMARK.coeffs[i] = json[i].w;
+    for (i = 0; i < json.length; i++) {
+        AVGMARK.total[i] = {
+            val: json[i].v,
+            valid: true
+        };
+        AVGMARK.coeffs[i] = {
+            val: json[i].w,
+            valid: true
+        };
     }
 
     for (i = json.length; i < delButs.length; i++) {
         delButs.eq(i).click();
     }
+    // TODO if the button is going to be deleted no value must be add, there's an exception here
 
     $(".mark-group .coeff").each(function(index, elem) {
-        elem.value = AVGMARK.coeffs[index];
-        last_ind = index;
+        if (index < AVGMARK.coeffs.length) {
+            elem.value = AVGMARK.coeffs[index].val;
+            last_ind = index;
+        }
     });
 
     $(".mark-group .mark").each(function(index, elem) {
-        elem.value = AVGMARK.total[index];
-        if (index > last_ind) last_ind = index;
+        if (index < AVGMARK.total.length) {
+            elem.value = AVGMARK.total[index].val;
+            if (index > last_ind) last_ind = index;
+        }
     });
 
     // add missing buttons
