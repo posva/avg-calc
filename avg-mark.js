@@ -4,24 +4,41 @@ var AVGMARK = {
 };
 
 function markChange(me) {
-    var tmp, error;
+    var tmp, error, butsN;
     if (me.value.indexOf(',') != -1)
         me.value = me.value.replace(',', '.');
     tmp = parseFloat(me.value);
     error = tmp == "NaN" || isNaN(tmp);
     if (me.validity.valid || !error) {
-        $(me).parent().removeClass("has-error");
-        avgCalc();
+        butsN = avgCalc();
+        if (AVGMARK.total.length == butsN)
+            addMark();
     } else {
         $(me).parent().addClass("has-error");
-        console.log("NOOO");
     }
+    //butId = getButtonIndex(me);
+    //if (butId >= AVGMARK.total.length) {
+        //$(".mark-group .btn-danger").eq(butId).click();
+    //}
 }
 
+// unused at the moment
+function getButtonIndex(me) {
+    var but = -1;
+    $(".mark-group .mark").each(function(index, elem) {
+        if (me === this || me === elem)
+            but = index;
+    });
+    return but;
+}
+
+// me is an optional parameter: object who trigered the event
+// return the number of buttons that exist
+// This is used in order to create or delete buttons for easier writing
 function avgCalc() {
     AVGMARK.total = [];
     AVGMARK.coeffs = [];
-    var sum = 0, n = 0;
+    var sum = 0, n = 0, butsN = 0;
     $(".mark-group .coeff").each(function(index, elem) {
         if (elem.value === "") {
             AVGMARK.coeffs[index] = {
@@ -37,16 +54,19 @@ function avgCalc() {
     });
 
     $(".mark-group .mark").each(function(index, elem) {
+        butsN++;
         if (elem.value === "") {
             AVGMARK.total[index] = {
                 val: 0,
                 valid: false
             };
+            //$(this).parent().addClass("has-error");
         } else {
             AVGMARK.total[index] = {
                 val: parseFloat(elem.value),
                 valid: true
             };
+            $(this).parent().removeClass("has-error");
             n += AVGMARK.coeffs[index].val; // take into account default coeff
             sum += AVGMARK.total[index].val*AVGMARK.coeffs[index].val;
         }
@@ -56,7 +76,6 @@ function avgCalc() {
         n = 1;
         sum = 0;
     }
-    //console.log("avg: "+sum+"/"+n);
     $('#average').html(" "+(sum/n).toFixed(3));
 
     // remove invalid values before updating json
@@ -69,17 +88,21 @@ function avgCalc() {
     }
 
     updateJSON();
+
+    return butsN;
 }
 
 function addMark(v, w) {
-    var mark;
+    var mark, last;
+    last = $("#marks div:last-child");
     $("#marks").append(markHTML(v, w));
     mark = $("#marks div:last-child");
     mark.show("fast");
     avgCalc();
     toggleMinus();
     $("#marks div:last-child .btn.btn-danger").tooltip({delay: { show: 350, hide: 0}});
-    mark.goTo();
+    if (last.length > 0)
+        last.goTo();
 }
 
 function toggleMinus() {
@@ -196,7 +219,6 @@ function updateFromJSON() {
     for (i = json.length; i < delButs.length; i++) {
         delButs.eq(i).click();
     }
-    // TODO if the button is going to be deleted no value must be add, there's an exception here
 
     $(".mark-group .coeff").each(function(index, elem) {
         if (index < AVGMARK.coeffs.length) {
@@ -254,7 +276,7 @@ function download(filename, text) {
             }, 'fast');
         //}
         return this; // for chaining...
-    }
+    };
 })(jQuery);
 
 $( document ).ready(function() {
